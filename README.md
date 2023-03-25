@@ -1,7 +1,7 @@
 # Sistem Monitorizare Parcare
 
 
-## Memberi:
+## Membrii echipei:
 * Podean Roxana-Andreea
 * Pop Adrian
 * Plăvăț Vlad
