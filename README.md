@@ -14,3 +14,6 @@ Sistem de monitorizare a numarului de locuri libere dintr-o parcare implementat 
 
 ## Lista Componente:
 ![Captură de ecran din 2023-03-25 la 23 30 00](https://user-images.githubusercontent.com/33669868/227743120-ca65c9f8-244b-4946-8362-29fd1daf044d.png)
+
+## Arhitectura sistemului - schemă bloc
+![Arhitectura sistemului](https://github.com/ptudorr/si_proiect/blob/main/arhitectura%20sistem/arhitectura_sistem.png)
