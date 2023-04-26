@@ -1,15 +1,27 @@
 #include "license_read.h"
 
 
-MFRC522 mfrc522(SS_PIN, RST_PIN);   // Create MFRC522 instance
+MFRC522 mfrc522_in(SS_PIN_IN, RST_PIN);   // Create MFRC522 instance
+MFRC522 mfrc522_out(SS_PIN_OUT, RST_PIN);   // Create MFRC522 instance
 
 
 void license_read_init(){
   SPI.begin();                                                  // Init SPI bus
-  mfrc522.PCD_Init();                                              // Init MFRC522 card
+  mfrc522_in.PCD_Init();                                              // Init MFRC522 card
+  mfrc522_out.PCD_Init();                                              // Init MFRC522 card
 }
 
-bool read_license(char *license){
+bool read_license(MFRC522 mfrc522, char *license);
+
+bool read_license_in(char *license){
+  return read_license(mfrc522_in, license);
+}
+
+bool read_license_out(char *license){
+  return read_license(mfrc522_out, license);
+}
+
+bool read_license(MFRC522 mfrc522, char *license){
   // Reset the loop if no new card present on the sensor/reader. This saves the entire process when idle.
   if ( ! mfrc522.PICC_IsNewCardPresent()) {
     byte buf[2];

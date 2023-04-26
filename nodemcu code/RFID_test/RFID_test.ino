@@ -13,6 +13,7 @@ void setup() {
   Serial.println();
   license_read_init();
   prevmillis = millis();
+  pinMode(D8, INPUT);
 }
 
 
@@ -40,9 +41,16 @@ void loop() {
   //-------------------------------------------
 
   char license[8];
-  if(!read_license(license)){
-    Serial.println("Error");
+  if(!read_license_in(license)){
+    Serial.println("Error - in");
   }else{
+    Serial.print("In: ");
+    Serial.println(license);
+  }
+  if(!read_license_out(license)){
+    Serial.println("Error - out");
+  }else{
+    Serial.print("Out: ");
     Serial.println(license);
   }
   
