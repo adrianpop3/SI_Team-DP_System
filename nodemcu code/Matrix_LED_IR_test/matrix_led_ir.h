@@ -7,12 +7,12 @@
 #define SPI_CLOCK_MATRIX (100000u)
 #define MATRIX_LED_IR_CS D8
 
-#define MATRIX_FREE 0
-#define MATRIX_ASSIGN 1
-
 //#define DEBUG_MATR_IN_INIT
 
 void init_matrixes();
+
+//display two charcters on one of the matrix displays
+//if b is 0 then a will be displayed in the middle
 void show_free_matrix(char a, char b);
 void show_assign_matrix(char a, char b);
 

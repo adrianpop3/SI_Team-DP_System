@@ -11,7 +11,7 @@ void loop() {
   delay(50);
   char str[10];
   sprintf(str,"%02X",t);
-  show_assign_matrix(str[0], str[1]);
+  show_assign_matrix(str[0], 0);
   sprintf(str,"%02X",0xFF-t);
   show_free_matrix(str[0], str[1]);
   

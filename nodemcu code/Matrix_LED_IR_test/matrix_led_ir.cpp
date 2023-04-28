@@ -1,9 +1,12 @@
 #include "matrix_led_ir.h"
 
+#define MATRIX_FREE 0
+#define MATRIX_ASSIGN 1
+
 uint32_t prev_ir_led_states = 0;//the value to be sent to the last 4 registers 
 uint8_t extra_ir = 0;
 
-uint8_t matrix_transfer[8];//cmd_free_ dat_free_
+uint8_t matrix_transfer[8];//cmd_free_L dat_free_L cmd_free_R dat_free_R cmd_assign_L dat_assign_L cmd_assign_R dat_assign_R
 
 void send_all(){
   digitalWrite(MATRIX_LED_IR_CS, LOW);
@@ -85,16 +88,25 @@ char convert_char_to_index(char c){
 void show_on_matrix(uint8_t matrix, char a, char b){
   uint8_t matr_offset = matrix==MATRIX_FREE?0:4;
   a = convert_char_to_index(a);
-  b = convert_char_to_index(b);
-  
-  for(uint8_t line = 0; line<8; line++){
-    matrix_transfer[matr_offset+0] = line+1;
-    matrix_transfer[matr_offset+1] = (FONT[a][line])&0xFF;
-    matrix_transfer[matr_offset+2] = line+1;
-    matrix_transfer[matr_offset+3] = (FONT[b][line])&0xFF;
-    send_all();
+  if(b==0){
+    for(uint8_t line = 0; line<8; line++){
+      matrix_transfer[matr_offset+0] = line+1;
+      matrix_transfer[matr_offset+1] = FONT[a][line]>>4;
+      matrix_transfer[matr_offset+2] = line+1;
+      matrix_transfer[matr_offset+3] = FONT[a][line]<<4;
+      send_all();
+    }
+  }else{
+    b = convert_char_to_index(b);
+    
+    for(uint8_t line = 0; line<8; line++){
+      matrix_transfer[matr_offset+0] = line+1;
+      matrix_transfer[matr_offset+1] = FONT[a][line];
+      matrix_transfer[matr_offset+2] = line+1;
+      matrix_transfer[matr_offset+3] = FONT[b][line];
+      send_all();
+    }
   }
-
 
   for(uint8_t i=0; i<8; i++)
     matrix_transfer[i]=0;//in future send NOP
