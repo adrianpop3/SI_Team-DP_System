@@ -16,8 +16,16 @@ void init_matrixes();
 void show_free_matrix(char a, char b);
 void show_assign_matrix(char a, char b);
 
-void set_all_leds(uint16_t ledStates);
-void set_all_leds(uint8_t *ledStates);
+#define IR_IN_BEFORE  19
+#define IR_IN_AFTER   18
+#define IR_OUT_BEFORE 16
+#define IR_OUT_AFTER  17
+
+
+void set_led(uint8_t ledNum, uint8_t state);
+
+
+#define ANALOG_TRESHOLD 512
 
 uint8_t read_ir_sensor(uint8_t sensorNumber);
 

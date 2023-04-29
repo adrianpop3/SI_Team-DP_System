@@ -3,7 +3,9 @@
 #define MATRIX_FREE 0
 #define MATRIX_ASSIGN 1
 
-uint32_t prev_ir_led_states = 0;//the value to be sent to the last 4 registers 
+//order D-B-C-A
+uint32_t ir_led_states = 0;//the value to be sent to the last 4 registers
+
 uint8_t extra_ir = 0;
 
 uint8_t matrix_transfer[8];//cmd_free_L dat_free_L cmd_free_R dat_free_R cmd_assign_L dat_assign_L cmd_assign_R dat_assign_R
@@ -13,10 +15,10 @@ void send_all(){
   delayMicroseconds(10);
   SPI.beginTransaction(SPISettings(SPI_CLOCK_MATRIX, MSBFIRST, SPI_MODE0));
   ///we have MATRIX_ASSIGN(4 bytes) -> MATRIX_FREE(4 bytes) -> IR in_out(1 byte) -> IR+LED(4 bytes)
-  SPI.transfer((prev_ir_led_states>>24)&0xFF);
-  SPI.transfer((prev_ir_led_states>>16)&0xFF);
-  SPI.transfer((prev_ir_led_states>> 8)&0xFF);
-  SPI.transfer((prev_ir_led_states>> 0)&0xFF);
+  SPI.transfer((ir_led_states>>24)&0xFF);
+  SPI.transfer((ir_led_states>>16)&0xFF);
+  SPI.transfer((ir_led_states>> 8)&0xFF);
+  SPI.transfer((ir_led_states>> 0)&0xFF);
   SPI.transfer(extra_ir);
   for(uint8_t i=0; i<8; i++)
     SPI.transfer(matrix_transfer[i]);
@@ -40,7 +42,7 @@ void init_matrixes(){
   SPI.begin();
   pinMode(MATRIX_LED_IR_CS, OUTPUT);
   digitalWrite(MATRIX_LED_IR_CS, HIGH);
-  delay(1);
+  delayMicroseconds(50);
 
   send_all_matrixes(0x0C, 0xFF);//no shutdown
   send_all_matrixes(0x09, 0x00);//no decode
@@ -114,12 +116,40 @@ void show_on_matrix(uint8_t matrix, char a, char b){
 
 
 
+//A1 A2 A3 A4 B1 B2 B3 B4 C1 C2 C3 C4 D1 D2 D3 D4
+const uint8_t ir_shift_map[]={0, 2, 4, 6, 16, 18, 20, 22, 14, 12, 10, 8, 30, 28, 26, 24};
 
-
-void set_all_leds(uint16_t ledStates){
+void set_led(uint8_t ledNum, uint8_t state){
+  if(ledNum >= 16) return;
   
+  if(state == HIGH){
+    ir_led_states |= (1<<(ir_shift_map[ledNum]+1));
+  }else{
+    ir_led_states &= ~(1<<(ir_shift_map[ledNum]+1));
+  }
+  send_all();
 }
 
-void set_all_leds(uint8_t *ledStates){
+#define IR_MASK 0x55555555
+
+uint8_t read_ir_sensor(uint8_t sensorNumber){
   
+  ir_led_states &= ~IR_MASK;
+  extra_ir = 0;
+
+  if(sensorNumber < 16)
+    ir_led_states |= (1<<ir_shift_map[sensorNumber]);
+  else
+    extra_ir = 1<<(sensorNumber-16);
+  send_all();
+  delayMicroseconds(10);
+  int adcValue = analogRead(A0);
+  
+  ir_led_states &= ~IR_MASK;
+  extra_ir = 0;
+  
+  if(adcValue > ANALOG_TRESHOLD)
+    return true;
+  else
+    return false;
 }
