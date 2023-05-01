@@ -1,0 +1,57 @@
+
+    <head>
+        <title>DP System</title>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-aFq/bzH65dt+w6FI2ooMVUpc+21e0SRygnTpmBvdBgSdnuTN7QbdgL+OapgHtvPp" crossorigin="anonymous" />
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha2/dist/js/bootstrap.bundle.min.js" integrity="sha384-qKXV1j0HvMUeCBQ+QVp7JcfGl760yU08IQ+GpUo5hlbpg51QRiuqHAJz8+BrxE/N" crossorigin="anonymous"></script>
+        <script src="https://kit.fontawesome.com/09c942d75c.js" crossorigin="anonymous"></script>
+        <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+    </head>
+
+    <body>
+        <div class="central">
+            <div class="title"><h1>Registration</h1></div>
+            <div class="content">
+                <div class="logo"><img src="../../assets/logo/logo_2.png" alt="logo" /></div>
+
+                <div class="information">
+                    <!-- <form (ngSubmit)="userRegister()"> -->
+
+                        <h4>Glad to see you joining!</h4>
+
+                        <div id="liveAlertPlaceholder"></div>
+                        <div class="input-group mb-3">
+                            <i class="fa-solid fa-envelope fa-user input-group-text"></i>
+                            <input type="email" class="form-control" id="exampleFormControlInput1" placeholder="E-mail" name="email" [(ngModel)]="user.email" />
+                        </div>
+                        
+                        <div class="input-group mb-3">
+                            <i class="fa-regular fa-user input-group-text"></i>
+                            <input type="text" class="form-control" placeholder="Full Name" aria-label="fullname" aria-describedby="basic-addon1" name="fullname" [(ngModel)]="user.username" />
+                        </div>
+
+                        <div class="input-group mb-3">
+                            <i class="fa-solid fa-hashtag input-group-text"></i>
+                            <input type="text" class="form-control" placeholder="Registration Number" aria-label="RegNumber" aria-describedby="basic-addon1" name="username" [(ngModel)]="user.username" />
+                        </div>
+
+                        <div class="input-group mb-3">
+                            <i class="fa-solid fa-lock input-group-text"></i>
+                            <input type="password" id="inputPassword" class="form-control" aria-labelledby="passwordHelpInline" placeholder="Password" name="password" [(ngModel)]="user.password" />
+                        </div>
+
+                        <div class="input-group mb-3">
+                            <i class="fa-solid fa-lock input-group-text"></i>
+                            <input type="password" id="inputPasswordConfirm" class="form-control" aria-labelledby="passwordHelpInline" placeholder="Confirm Password" name="confirmpassword" [(ngModel)]="user.confirmpassword" />
+                        </div>
+
+                        <div class="form-elements-bottom">
+                            <button type="submit" class="btn btn-primary btn-sm" id="liveAlertBtn">Register</button>
+                            <h6 style="display: inline-block;"><a routerLink="/login">Already a member?</a></h6>
+                        </div>
+
+                    <!-- </form> -->
+                </div>
+            </div>
+        </div>
+    </body>
+
