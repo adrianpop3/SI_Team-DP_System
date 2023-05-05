@@ -28,6 +28,8 @@ void set_led(uint8_t ledNum, uint8_t state);
 #define IR_OUT_BEFORE 16
 #define IR_OUT_AFTER  17
 
+#define FREE HIGH
+#define BLOCKED LOW
 
 uint8_t read_ir_sensor(uint8_t sensorNumber);
 
