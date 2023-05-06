@@ -3,6 +3,7 @@
 #include <string.h>
 #include "license_read.h"
 #include "matrix_led_ir.h"
+#include "wifi_comm.h"
 
 #define OFFLINE_RED_DELAY 1000
 #define OFFLINE_GREEN_DELAY 5000
@@ -64,6 +65,10 @@ unsigned long time_since_IR_change[16];
 bool prev_IR_state[16];
 
 
+enum IN_STATES{IN_IDLE, IN_READ, IN_DECLINE, IN_ACCEPT, IN_UNDER, IN_LEAVING};
+enum IN_STATES fsm_in_state = IN_IDLE, fsm_out_state = IN_IDLE;
+
+
 void setup() {
 
   Serial.begin(9600);
@@ -79,14 +84,16 @@ void setup() {
   servo_in.attach(D1, 1010, 2010);
   servo_out.attach(D2, 930, 1970);
 
-  servo_in.write(BARRIER_UP);
-  servo_out.write(BARRIER_UP);
+  servo_in.write(BARRIER_DOWN);
+  servo_out.write(BARRIER_DOWN);
 
-  if(read_ir_sensor(IR_IN_AFTER) == FREE){
-    servo_in.write(BARRIER_DOWN);
+  if(read_ir_sensor(IR_IN_AFTER) == BLOCKED){
+    fsm_in_state = IN_LEAVING;
+    servo_in.write(BARRIER_UP);
   }
-  if(read_ir_sensor(IR_OUT_AFTER) == FREE){
-    servo_out.write(BARRIER_DOWN);
+  if(read_ir_sensor(IR_OUT_AFTER) == BLOCKED){
+    fsm_out_state = IN_LEAVING;
+    servo_out.write(BARRIER_UP);
   }
   
   if(digitalRead(D0) == HIGH){
@@ -106,6 +113,7 @@ void setup() {
       set_led(i, GREEN);
     }
   }else{//ONLINE_MODE
+    wifi_init();
   }
 }
 
@@ -125,8 +133,6 @@ char offline_assign(){
   return 'X';
 }
 
-enum IN_STATES{IN_IDLE, IN_READ, IN_DECLINE, IN_ACCEPT, IN_UNDER, IN_LEAVING};
-enum IN_STATES fsm_in_state = IN_IDLE, fsm_out_state = IN_IDLE;
 
 unsigned long prevMillis = 0, crMillis = 0, deltaTime = 0;
 void loop() {
@@ -237,7 +243,10 @@ void loop() {
     free_spaces = free_A + free_B + free_C + free_D;
     
   }else{//ONLINE_MODE
+    delay(1000);
+    send_over_mqtt("Nodemcu is here");
     
+    wifi_update();
   }
 
   
