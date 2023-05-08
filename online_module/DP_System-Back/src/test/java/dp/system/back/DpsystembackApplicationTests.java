@@ -1,13 +1,13 @@
-package si.proiect.dpsystem;
+package dp.system.back;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class DpSystemApplicationTests {
+class DpsystembackApplicationTests {
 
-    @Test
-    void contextLoads() {
-    }
+	@Test
+	void contextLoads() {
+	}
 
 }
