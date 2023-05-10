@@ -5,8 +5,8 @@
 #include "matrix_led_ir.h"
 #include "wifi_comm.h"
 
-#define OFFLINE_RED_DELAY 1000
-#define OFFLINE_GREEN_DELAY 5000
+#define RED_DELAY 1000
+#define GREEN_DELAY 5000
 
 #define OFFLINE_MODE 0
 #define ONLINE_MODE 1
@@ -52,14 +52,18 @@ void show_assign(char a, char b){
 
 
 
+char spaces_states[16];
 uint8_t free_spaces;
 uint8_t free_A, free_B, free_C, free_D;
 
-struct offline_data_str{
+struct car_data_str{
   char license[10];
-  char zone;
-}offline_data[16];
-int nr_offline_data_entries = 0;
+  union{
+    char zone;
+    uint8_t space;
+  };
+}car_data[16];
+int nr_car_data_entries = 0;
 
 unsigned long time_since_IR_change[16];
 bool prev_IR_state[16];
@@ -98,8 +102,10 @@ void setup() {
   
   if(digitalRead(D0) == HIGH){
     func_mod = ONLINE_MODE;
+    Serial.println("Online mode");
   }else{
     func_mod = OFFLINE_MODE;
+    Serial.println("Offline mode");
   }
 
   //read inital
@@ -114,6 +120,15 @@ void setup() {
     }
   }else{//ONLINE_MODE
     wifi_init();
+    //////////
+    free_spaces = 16;
+    free_A = 4;free_B = 4;free_C = 4;free_D = 4;
+    for(uint8_t i=0; i<16; i++){
+      spaces_states[i]='F';
+      time_since_IR_change[i] = 0;
+      prev_IR_state[i] = FREE;
+      set_led(i, GREEN);
+    }
   }
 }
 
@@ -133,6 +148,14 @@ char offline_assign(){
   return 'X';
 }
 
+uint8_t online_assign(){
+  uint8_t assign;
+  for(assign = 0; assign<16; assign++)
+    if(spaces_states[assign]=='F')
+      break;
+  spaces_states[assign] = 'W';
+  return assign;
+}
 
 unsigned long prevMillis = 0, crMillis = 0, deltaTime = 0;
 void loop() {
@@ -141,12 +164,12 @@ void loop() {
   prevMillis = crMillis;
   
   init_matrixes();
-  if(func_mod == OFFLINE_MODE){
-    if(free_spaces<10)
-      show_free_matrix(free_spaces+'0',0);
-    else
-      show_free_matrix(free_spaces/10+'0',free_spaces%10+'0');
+  if(free_spaces<10)
+    show_free_matrix(free_spaces+'0',0);
+  else
+    show_free_matrix(free_spaces/10+'0',free_spaces%10+'0');
   show_assign_matrix(dsp_assign_a, dsp_assign_b);
+  if(func_mod == OFFLINE_MODE){
     //////////////
 
     char license[10];
@@ -159,9 +182,9 @@ void loop() {
             char zone = offline_assign();
             if(zone != 'X'){
               servo_in.write(BARRIER_UP);
-              strcpy(offline_data[nr_offline_data_entries].license, license);
-              offline_data[nr_offline_data_entries].zone = zone;
-              nr_offline_data_entries++;
+              strcpy(car_data[nr_car_data_entries].license, license);
+              car_data[nr_car_data_entries].zone = zone;
+              nr_car_data_entries++;
               show_assign(zone, 0);
               fsm_in_state = IN_ACCEPT;
             }
@@ -189,9 +212,9 @@ void loop() {
         prev_IR_state[i] = read_ir_sensor(i);
         time_since_IR_change[i] = 0;
       }
-      if(prev_IR_state[i] == BLOCKED && time_since_IR_change[i] >= OFFLINE_RED_DELAY){
+      if(prev_IR_state[i] == BLOCKED && time_since_IR_change[i] >= RED_DELAY){
         set_led(i, RED);
-      }else if(prev_IR_state[i] == FREE && time_since_IR_change[i] >= OFFLINE_GREEN_DELAY){
+      }else if(prev_IR_state[i] == FREE && time_since_IR_change[i] >= GREEN_DELAY){
         set_led(i, GREEN);
       }else{
         time_since_IR_change[i] += deltaTime;
@@ -209,18 +232,18 @@ void loop() {
             fsm_out_state = IN_ACCEPT;
 
             uint8_t found = 0;
-            for(uint8_t i=0; i<nr_offline_data_entries; i++){
-              if(strcmp(license, offline_data[i].license) == 0){
-                switch(offline_data[i].zone){
+            for(uint8_t i=0; i<nr_car_data_entries; i++){
+              if(strcmp(license, car_data[i].license) == 0){
+                switch(car_data[i].zone){
                   case 'A': free_A++; break;
                   case 'B': free_B++; break;
                   case 'C': free_C++; break;
                   case 'D': free_D++; break;
                 }
-                for(; i+1<nr_offline_data_entries; i++){
-                  offline_data[i] = offline_data[i+1];
+                for(; i+1<nr_car_data_entries; i++){
+                  car_data[i] = car_data[i+1];
                 }
-                nr_offline_data_entries--;
+                nr_car_data_entries--;
                 found = 1;
                 break;
               }
@@ -243,10 +266,133 @@ void loop() {
     free_spaces = free_A + free_B + free_C + free_D;
     
   }else{//ONLINE_MODE
-    delay(1000);
-    send_over_mqtt("Nodemcu is here");
-    
     wifi_update();
+
+    char license[10];
+    switch(fsm_in_state){
+      case IN_IDLE: if(read_ir_sensor(IR_IN_BEFORE) == BLOCKED) fsm_in_state = IN_READ;
+        break;
+      case IN_READ: 
+        if(read_license_in(license) == true){
+          static unsigned long timeSinceLastSend = 250;
+
+          //if we already have the access status do not send request
+          if(strcmp(access_license,license)==0){
+            timeSinceLastSend = 250;
+            if(verdict[0]=='Y'){
+              if(free_spaces > 0){
+                Serial.println("Accepted");
+                servo_in.write(BARRIER_UP);
+                uint8_t assigned_space = online_assign();
+                show_assign('A'+assigned_space/4, '1'+assigned_space%4);
+                
+                strcpy(car_data[nr_car_data_entries].license, license);
+                car_data[nr_car_data_entries].space = assigned_space;
+                nr_car_data_entries++;
+                
+                fsm_in_state = IN_ACCEPT;
+              }
+            }else if(verdict[0]=='N'){
+              fsm_in_state = IN_DECLINE;
+            }else{//car has reservation
+              Serial.println("Accepted with reservation");
+              servo_in.write(BARRIER_UP);
+              uint8_t assigned_space = 4*(verdict[0]-'A')+verdict[1]-'1';
+              show_assign('A'+assigned_space/4, '1'+assigned_space%4);
+              
+              strcpy(car_data[nr_car_data_entries].license, license);
+              car_data[nr_car_data_entries].space = assigned_space;
+              nr_car_data_entries++;
+              
+              fsm_in_state = IN_ACCEPT;
+              
+            }
+          }else{//send or resend the request to get access status
+            if(timeSinceLastSend > 200){
+              send_license(license);
+            }else{
+              timeSinceLastSend += deltaTime;
+            } 
+          }
+        }
+        break;
+      case IN_DECLINE: if(read_ir_sensor(IR_IN_BEFORE) == FREE) fsm_in_state = IN_IDLE;
+        break;
+      case IN_ACCEPT: if(read_ir_sensor(IR_IN_AFTER) == BLOCKED) fsm_in_state = IN_UNDER;
+        break;
+      case IN_UNDER: if(read_ir_sensor(IR_IN_BEFORE) == FREE) fsm_in_state = IN_LEAVING;
+        break;
+      case IN_LEAVING: 
+        if(read_ir_sensor(IR_IN_AFTER) == FREE){
+          servo_in.write(BARRIER_DOWN);
+          fsm_in_state = IN_IDLE;
+        }
+        break;
+    }
+
+  
+
+
+    switch(fsm_out_state){
+      case IN_IDLE: if(read_ir_sensor(IR_OUT_BEFORE) == BLOCKED) fsm_out_state = IN_READ;
+        break;
+      case IN_READ: 
+        if(read_license_out(license) == true){
+            servo_out.write(BARRIER_UP);
+            fsm_out_state = IN_ACCEPT;
+
+            uint8_t found = 0;
+            for(uint8_t i=0; i<nr_car_data_entries; i++){
+              if(strcmp(license, car_data[i].license) == 0){
+                spaces_states[car_data[i].space] = 'F';
+                for(; i+1<nr_car_data_entries; i++){
+                  car_data[i] = car_data[i+1];
+                }
+                nr_car_data_entries--;
+                found = 1;
+                break;
+              }
+            }
+            
+        }
+        break;
+      case IN_ACCEPT: if(read_ir_sensor(IR_OUT_AFTER) == BLOCKED) fsm_out_state = IN_UNDER;
+        break;
+      case IN_UNDER: if(read_ir_sensor(IR_OUT_BEFORE) == FREE) fsm_out_state = IN_LEAVING;
+        break;
+      case IN_LEAVING: 
+        if(read_ir_sensor(IR_OUT_AFTER) == FREE){
+          servo_out.write(BARRIER_DOWN);
+          fsm_out_state = IN_IDLE;
+        }
+        break;
+    }
+
+    free_spaces=0;
+    for(uint8_t i=0; i<16; i++){
+      if(read_ir_sensor(i) != prev_IR_state[i]){
+        prev_IR_state[i] = read_ir_sensor(i);
+        time_since_IR_change[i] = 0;
+      }
+      if(time_since_IR_change[i] <= RED_DELAY)
+        time_since_IR_change[i] += deltaTime;
+      
+      if(spaces_states[i] == 'F'){
+        free_spaces++;
+        set_led(i, GREEN);
+      }else if(spaces_states[i] == 'R'){
+        //R - reserved or car present
+        set_led(i, RED);
+      }else{
+        //'W' - wait for car with no reservation to arrive at its assigned space
+        if(prev_IR_state[i] == BLOCKED && time_since_IR_change[i] >= RED_DELAY){
+          spaces_states[i] = 'R';
+        }
+      }
+    }
+
+
+    
   }
 
   
