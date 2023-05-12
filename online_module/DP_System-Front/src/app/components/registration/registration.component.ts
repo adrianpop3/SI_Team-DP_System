@@ -13,10 +13,10 @@ export class RegistrationComponent {
 
   constructor(private registerService: RegistrationService, private router: Router) { }
 
-  // userRegister() {
-  //   this.registerService.registerUser(this.user)
-  //     .subscribe(data => {
-  //       this.router.navigate(['/login']);
-  //   },  error=>alert("Sorry, registration failed!"));
-  // }
+  userRegister() {
+    this.registerService.registerUser(this.user)
+      .subscribe(data => {
+        this.router.navigate(['/login']);
+    },  error=>alert("Sorry, registration failed!"));
+  }
 }

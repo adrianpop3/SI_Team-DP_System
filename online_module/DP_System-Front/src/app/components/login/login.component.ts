@@ -13,10 +13,10 @@ export class LoginComponent {
 
   constructor(private loginService: LoginService, private router: Router) { }
 
-  // userLogin() {
-  //   this.loginService.loginUser(this.user)
-  //     .subscribe(data => {
-  //       this.router.navigate(['/home']);
-  //     }, error => alert("Login failed!"));
-  // }
+  userLogin() {
+    this.loginService.loginUser(this.user)
+      .subscribe(data => {
+        this.router.navigate(['/home']);
+      }, error => alert("Login failed!"));
+  }
 }

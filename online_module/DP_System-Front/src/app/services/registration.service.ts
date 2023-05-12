@@ -7,12 +7,12 @@ import { HttpClient } from '@angular/common/http';
   providedIn: 'root'
 })
 export class RegistrationService {
-  baseUrl="";
+  baseUrl="http://localhost:8083/register";
 
-  // constructor(private httpClient: HttpClient) { 
-  // }
+  constructor(private httpClient: HttpClient) { 
+  }
 
-  // registerUser(user: User): Observable<Object>{
-  //   return this.httpClient.post(`${this.baseUrl}`, user);
-  // }
+  registerUser(user: User): Observable<Object>{
+    return this.httpClient.post(`${this.baseUrl}`, user);
+  }
 }

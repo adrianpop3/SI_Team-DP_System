@@ -1,7 +1,9 @@
 export class User {
     id: number | undefined;
+    email!: string;
+    fullName!: string;
     username!: string;
     password!: string;
-    confirmpassword!: string
-    email!: string;
+    confirmpassword!: string;
+    plateNumber!: string;
 }

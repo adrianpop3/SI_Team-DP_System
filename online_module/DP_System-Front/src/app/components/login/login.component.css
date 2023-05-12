@@ -1,3 +1,6 @@
+.bck {
+    background-color:#e99319;
+  }
 
 .central {
     background: linear-gradient(90deg, rgba(2,0,36,1) 0%, rgba(140,39,45,1) 35%, rgba(235,177,26,1) 100%);
@@ -50,10 +53,6 @@ form{
     flex-direction: column;
 }
 
-.input-group, input{
-    width: 10%;
-}
-
 form input::placeholder {
     color: black;
     opacity: 70%;
@@ -82,12 +81,18 @@ form input::placeholder {
     border-color: rgb(51, 49, 85); 
   }
 
-  .form-elements-bottom h6 {
+.form-elements-bottom h6{
+    padding-top: 10px;
+}
+
+.form-elements-bottom h6 a {
+    text-decoration: none;
     margin-top: 10px;
     color: rgba(2,0,36,1);
-  }
-
-  .form-elements-bottom h6:hover {
+}
+  
+.form-elements-bottom h6 a:hover {
+    text-decoration: none;
     margin-top: 10px;
     color: rgb(33, 31, 70); 
-  }
+}

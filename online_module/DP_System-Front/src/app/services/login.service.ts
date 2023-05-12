@@ -7,11 +7,11 @@ import { HttpClient } from '@angular/common/http';
   providedIn: 'root'
 })
 export class LoginService {
-  private baseUrl="";
+  private baseUrl="http://localhost:8083/login";
 
-  // constructor(private httpClient: HttpClient ) { }
+  constructor(private httpClient: HttpClient ) { }
 
-  // loginUser(user: User): Observable<object> {
-  //   return this.httpClient.post(`${this.baseUrl}`, user);
-  // }
+  loginUser(user: User): Observable<object> {
+    return this.httpClient.post(`${this.baseUrl}`, user);
+  }
 }
