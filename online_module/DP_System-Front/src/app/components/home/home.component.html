@@ -18,7 +18,11 @@
     <div class="content">
 
       <div class="a">
-        <div class="a1"></div>
+        <div class="a1">
+          <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addReservationModal">
+            Make Reservation
+          </button>
+        </div>
         <div class="a2"></div>
         <div class="a3"></div>
         <div class="a4"></div>
@@ -48,3 +52,29 @@
     </div>
 
   </body>
+
+   <!-- Add Reservation Modal -->
+    <div class="modal fade" id="addReservationModal" tabindex="-1" role="dialog" aria-labelledby="addReservationModalLabel" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title" id="addReservationModalLabel">Add New Reservation :</h5>
+            <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="modal-body">
+            <form #addForm="ngForm" (ngSubmit)="onAddReservation(addForm)">
+              <div class="form-group">
+              <label for="name">Plate Number</label>
+              <input type="text" ngModel name="plateNumber" class="form-control" id="plateNumber" placeholder="Plate Number" required>
+              </div>
+              <div>
+              <button type="button" id="add-Reservation-form" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+              <button [disabled]="addForm.invalid" type="submit" class="btn btn-primary" >Add Reservation</button>
+              </div>
+            </form>
+        </div>
+    </div>
+    </div>
+  </div>

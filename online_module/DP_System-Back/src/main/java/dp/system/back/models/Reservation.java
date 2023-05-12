@@ -13,16 +13,13 @@ import java.io.Serializable;
 @Setter
 @Getter
 @Entity
-public class ParkingSpot implements Serializable {
+public class Reservation implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(nullable = false, updatable = false)
     private Long id;
 
-    private boolean isFree;
-    private Integer number;
-
     @ManyToOne
-    private User occupant;
+    private User reserver;
 }
