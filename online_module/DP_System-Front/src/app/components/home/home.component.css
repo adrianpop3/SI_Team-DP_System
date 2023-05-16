@@ -1,0 +1,139 @@
+*{
+  margin: 0;
+  padding: 0;
+}
+
+body{
+  height: 100vh;
+  width: 100vw;
+}
+
+.navbar {
+  height: 70px;
+  /* width: 1440px; */
+
+  background: linear-gradient(90deg, rgba(235,177,26,1) 26%, rgba(140,39,45,1) 83%);
+
+
+  /* background-color: #EBB11A;  */
+  display: flex;
+  justify-content: space-between; /* add space between the logo and buttons */
+  align-items: center; 
+
+  padding-right: 60px;
+  padding-left: 60px;
+}
+
+.logo img {
+  padding-top: 15px;
+  height: 190px;
+  width: auto;
+}
+
+.buttons {
+  display: flex;
+  align-items: center;
+}
+
+.buttons i {
+  font-size: 35px;
+  margin-right: 10px;
+  cursor: pointer;
+}
+
+.buttons i:first-child {
+  margin-right: 70px; /* set a smaller margin on the first button */
+}
+
+.content {
+  background-image: url('src/assets/background.png'); 
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
+  position: absolute;
+
+  left: 0;
+  right: 0;
+  bottom: 0;
+
+  width: 100vw;
+  height: calc(100vh - 70px);
+}
+
+
+
+/* Area A of the parkin space */
+.content .a{
+  display: flex;
+  width: 600px;
+  margin-left: 187px;
+}
+
+.content .a div{
+  height: 222px;
+  width: 100px;
+  background-color: green;
+  opacity: 50%;
+  margin-top: 55px;
+  margin-right: 36.5px;
+}
+
+
+/* Area B of the parkin space */
+.content .b{
+  display: flex;
+  width: 600px;
+  margin-left: 888px;
+}
+
+.content .b div{
+  height: 222px;
+  width: 100px;
+  background-color: green;
+  opacity: 50%;
+  margin-top: -222px;
+  margin-right: 36.5px;
+}
+
+
+/* Area C of the parkin space */
+.content .c{
+  display: flex;
+  width: 600px;
+  margin-left: 42px;
+}
+
+.content .c div{
+  height: 222px;
+  width: 100px;
+  background-color: green;
+  opacity: 50%;
+  margin-top: 196.3px;
+  margin-right: 36.5px;
+}
+
+/* Area D of the parkin space */
+.content .d{
+  display: flex;
+  width: 600px;
+  margin-left: 752px;
+}
+
+.content .c .c3{
+  background-color: red;
+}
+.content .a .a4{
+  background-color: red;
+}
+.content .d .d4{
+  background-color: red;
+}
+
+.content .d div{
+  height: 222px;
+  width: 100px;
+  background-color: green;
+  opacity: 50%;
+  margin-top: -222px;
+  margin-right: 36.5px;
+}
