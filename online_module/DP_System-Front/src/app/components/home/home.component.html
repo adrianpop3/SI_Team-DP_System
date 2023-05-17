@@ -1,80 +1,72 @@
-<head>
-    <title>DP System</title>
-    <script src="https://kit.fontawesome.com/09c942d75c.js" crossorigin="anonymous"></script>
-  </head>
+<body>
+  <nav class="navbar">
+    <div class="logo">
+      <img src="../../../assets/logo/logo_1.png" alt="Logo" />
+    </div>
 
-  <body>
-    <nav class="navbar">
-        <div class="logo">
-            <img src="../../assets/logo/logo_1.png" alt="Logo">
-        </div>
+    <div class="buttons">
+        <i class="fa-solid fa-square-parking"></i>
+        <i class="fa-solid fa-user"></i>
+    </div>
+  </nav>
 
-        <div class="buttons">
-          <i class="fa-solid fa-square-parking"></i>
-          <i class="fa-solid fa-user"></i>
-        </div>
-    </nav>
-
-    <div class="content">
-
+  <div class="content">
       <div class="a">
-        <div class="a1">
-          <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addReservationModal">
-            Make Reservation
-          </button>
-        </div>
-        <div class="a2"></div>
-        <div class="a3"></div>
-        <div class="a4"></div>
+          <div class="a1">
+              <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addReservationModal">
+                  Make Reservation
+              </button>
+          </div>
+          <div class="a2"></div>
+          <div class="a3"></div>
+          <div class="a4"></div>
       </div>
 
       <div class="b">
-        <div class="b1"></div>
-        <div class="b2"></div>
-        <div class="b3"></div>
-        <div class="b4"></div>
+          <div class="b1"></div>
+          <div class="b2"></div>
+          <div class="b3"></div>
+          <div class="b4"></div>
       </div>
 
       <div class="c">
-        <div class="c1"></div>
-        <div class="c2"></div>
-        <div class="c3"></div>
-        <div class="c4"></div>
+          <div class="c1"></div>
+          <div class="c2"></div>
+          <div class="c3"></div>
+          <div class="c4"></div>
       </div>
 
       <div class="d">
-        <div class="d1"></div>
-        <div class="d2"></div>
-        <div class="d3"></div>
-        <div class="d4"></div>
+          <div class="d1"></div>
+          <div class="d2"></div>
+          <div class="d3"></div>
+          <div class="d4"></div>
       </div>
-
-    </div>
-
-  </body>
-
-   <!-- Add Reservation Modal -->
-    <div class="modal fade" id="addReservationModal" tabindex="-1" role="dialog" aria-labelledby="addReservationModalLabel" aria-hidden="true">
-      <div class="modal-dialog" role="document">
-      <div class="modal-content">
-        <div class="modal-header">
-            <h5 class="modal-title" id="addReservationModalLabel">Add New Reservation :</h5>
-            <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-            </button>
-        </div>
-        <div class="modal-body">
-            <form #addForm="ngForm" (ngSubmit)="onAddReservation(addForm)">
-              <div class="form-group">
-              <label for="name">Plate Number</label>
-              <input type="text" ngModel name="plateNumber" class="form-control" id="plateNumber" placeholder="Plate Number" required>
-              </div>
-              <div>
-              <button type="button" id="add-Reservation-form" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-              <button [disabled]="addForm.invalid" type="submit" class="btn btn-primary" >Add Reservation</button>
-              </div>
-            </form>
-        </div>
-    </div>
-    </div>
   </div>
+</body>
+
+<!-- Add Reservation Modal -->
+<div class="modal fade" id="addReservationModal" tabindex="-1" role="dialog" aria-labelledby="addReservationModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+      <div class="modal-content">
+          <div class="modal-header">
+              <h5 class="modal-title" id="addReservationModalLabel">Add New Reservation :</h5>
+              <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+              </button>
+          </div>
+          <div class="modal-body">
+              <form #addForm="ngForm" (ngSubmit)="onAddReservation(addForm)">
+                  <div class="form-group">
+                      <label for="name">Plate Number</label>
+                      <input type="text" ngModel name="plateNumber" class="form-control" id="plateNumber" placeholder="Plate Number" required />
+                  </div>
+                  <div>
+                      <button type="button" id="add-Reservation-form" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                      <button [disabled]="addForm.invalid" type="submit" class="btn btn-primary">Add Reservation</button>
+                  </div>
+              </form>
+          </div>
+      </div>
+  </div>
+</div>
