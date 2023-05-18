@@ -7,6 +7,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -20,9 +22,6 @@ public class ParkingSpot implements Serializable {
     @Column(nullable = false, updatable = false)
     private Long id;
 
-    private boolean isFree;
-    private Integer number;
-
-    @ManyToOne
-    private User occupant;
+//    @ManyToOne
+//    private User occupant;
 }

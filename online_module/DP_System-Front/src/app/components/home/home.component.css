@@ -50,6 +50,7 @@ body{
   background-size: cover;
   background-repeat: no-repeat;
   position: absolute;
+  overflow-x: hidden;
 
   left: 0;
   right: 0;
