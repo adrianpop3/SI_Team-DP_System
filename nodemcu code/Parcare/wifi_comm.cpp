@@ -54,7 +54,7 @@ void wifi_init() {
   WiFi.begin(ssid, password);
 
   while (WiFi.status() != WL_CONNECTED) {
-    delay(10);
+    wifi_flash();
     Serial.println("Connecting to WiFi...");
   }
   WiFi.setAutoReconnect(true);
@@ -66,8 +66,8 @@ void wifi_init() {
   client.setCallback(callback);
   
   while(!client.connected()) {
-    Serial.println("yyay");
     try_reconnect();
+    mqtt_flash();
   }
   
   Serial.println("Connected to mqtt");

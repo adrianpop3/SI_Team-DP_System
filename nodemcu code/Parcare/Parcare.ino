@@ -119,6 +119,8 @@ void setup() {
       set_led(i, GREEN);
     }
   }else{//ONLINE_MODE
+    init_matrixes();
+    show_assign_matrix(0,0);
     wifi_init();
     //////////
     free_spaces = 16;

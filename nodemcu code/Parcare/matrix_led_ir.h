@@ -15,6 +15,9 @@ void init_matrixes();
 //if b is 0 then a will be displayed in the middle
 void show_free_matrix(char a, char b);
 void show_assign_matrix(char a, char b);
+void wifi_flash();
+void mqtt_flash();
+
 
 #define RED LOW
 #define GREEN HIGH

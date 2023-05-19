@@ -153,3 +153,32 @@ uint8_t read_ir_sensor(uint8_t sensorNumber){
   else
     return false;
 }
+
+void matrix_flash(const uint8_t arr[], uint8_t matrix){
+  uint8_t matr_offset = matrix==MATRIX_FREE?0:4;
+  init_matrixes();
+  for(uint8_t line = 0; line<8; line++){
+    matrix_transfer[matr_offset+0] = line+1;
+    matrix_transfer[matr_offset+1] = arr[line*2];
+    matrix_transfer[matr_offset+2] = line+1;
+    matrix_transfer[matr_offset+3] = arr[line*2+1];
+    send_all();
+  }
+  for(uint8_t i=0; i<32; i++){
+    matrix_transfer[matr_offset] =0x0A;
+    matrix_transfer[matr_offset+1]= (i<16)?15-i:i-16;
+    matrix_transfer[matr_offset+2]=0x0A;
+    matrix_transfer[matr_offset+3]= (i<16)?15-i:i-16;
+    send_all();
+    delay(10);
+  }
+  for(uint8_t i=0; i<8; i++)
+    matrix_transfer[i]=0;//in future send NOP
+}
+
+void wifi_flash(){
+  matrix_flash(WIFI_SYMBOL, MATRIX_FREE);
+}
+void mqtt_flash(){
+  matrix_flash(MQTT_SYMBOL, MATRIX_ASSIGN);
+}

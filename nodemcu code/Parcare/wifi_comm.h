@@ -2,6 +2,7 @@
 #define __WIFI_COMM_INCLUDED
 
 #include "wifi_credentials.h"
+#include "matrix_led_ir.h"
 /*this should contain
 
 #define SSID "ssid"
