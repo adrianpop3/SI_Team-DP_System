@@ -11,12 +11,17 @@ const char* password = PASSWORD;
 const char* mqtt_server = MQTT_SERVER;
 const char* topic = TOPIC;
 
-char access_license[10], verdict[5];
+char access_license[10], exit_license[10], reservation_license[10], verdict[5];
 
 DynamicJsonDocument doc(256);
 char message_to_send[130];
 
 char received_json[256];
+char ack;
+int prev_seq_nr = 0;
+uint8_t assigned_reservation_space;
+uint8_t reservation_assign();
+
 void callback(char* topic, byte* payload, unsigned int length) {
   strncpy(received_json, (char*)payload, length);
   received_json[length]='\0';
@@ -24,13 +29,55 @@ void callback(char* topic, byte* payload, unsigned int length) {
   deserializeJson(doc, received_json);
 
   const char *type = doc["type"];
-  if(strcmp(type, "reply_access")==0){
-    strcpy(access_license, doc["license"]);
-    strcpy(verdict, doc["verdict"]);
+  if(strcmp(type, "enter_reply")==0){
+    strcpy(access_license, doc["plateNumber"]);
+    strcpy(verdict, doc["parkingSpaceNumber"]);
+  }else if(strcmp(type, "reset-ACK")==0){
+    ack=1;
+  }else if(strcmp(type, "exit_reply")==0){
+    strcpy(exit_license, doc["plateNumber"]);
+  }else if(strcmp(type, "reservation_request")==0){
+    int seq_cr = doc["seq_nr"];
+    if(seq_cr > prev_seq_nr){
+      //new request
+      strcpy(reservation_license, doc["plateNumber"]);
+      assigned_reservation_space = reservation_assign();//0-15 or 16 if not found
+      prev_seq_nr = seq_cr;
+    }
+    if(seq_cr == prev_seq_nr){
+      //same request; resend reply
+      doc.clear();
+      doc["type"] = "reservation_reply";
+      doc["plateNumber"] = reservation_license;
+      char space[3]; space[2]='\0';
+      if(assigned_reservation_space == 16){
+        space[0]='X'; space[1]='\0';
+      }else{
+        space[0] = 'A'+assigned_reservation_space/4;
+        space[1] = '1'+assigned_reservation_space%4;
+      }
+      doc["space"] = space;
+      doc["seq_nr"] = seq_cr;
+      serializeJson(doc, message_to_send);
+      send_over_mqtt(message_to_send);
+    }
   }
   //Serial.println(type);
 }
 
+extern char spaces_states[16];
+
+uint8_t reservation_assign(){
+  if(free_spaces == 0){
+    return 16;
+  }
+  uint8_t assign;
+  for(assign = 0; assign<16; assign++)
+    if(spaces_states[assign]=='F')
+      break;
+  spaces_states[assign] = 'R';
+  return assign;
+}
 
 bool try_reconnect() {
   if (!client.connected()) {
@@ -66,8 +113,8 @@ void wifi_init() {
   client.setCallback(callback);
   
   while(!client.connected()) {
-    try_reconnect();
     mqtt_flash();
+    try_reconnect();
   }
   
   Serial.println("Connected to mqtt");
@@ -105,10 +152,34 @@ void send_over_mqtt(char *s){
 
 void send_license(char *s){
   doc.clear();
-  doc["type"] = "req_car_access";
-  doc["license"] = s;
+  doc["type"] = "enter_request";
+  doc["plateNumber"] = s;
   
   serializeJson(doc, message_to_send);
   
+  send_over_mqtt(message_to_send);
+}
+
+void send_reset(){
+  doc.clear();
+  doc["type"] = "reset";
+  serializeJson(doc, message_to_send);
+  send_over_mqtt(message_to_send);
+}
+
+void send_exit(char *s){
+  doc.clear();
+  doc["type"] = "exit_request";
+  doc["plateNumber"] = s;
+  serializeJson(doc, message_to_send);
+  send_over_mqtt(message_to_send);
+}
+
+void send_states(char *states){
+  doc.clear();
+  doc["type"] = "led_state";
+  for(int i=0; i<16; i++)
+    doc["values"][i] = states[i]=='F'?1:0;
+  serializeJson(doc, message_to_send);
   send_over_mqtt(message_to_send);
 }

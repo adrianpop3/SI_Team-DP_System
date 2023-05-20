@@ -12,14 +12,17 @@
 
 */
 
-extern char access_license[10], verdict[5];
-extern char response[100];
+extern char access_license[10], exit_license[10], verdict[5];
+extern char response[100], ack;
 
 void wifi_init();
 
 bool wifi_update();
 
 void send_license(char *s);
+void send_reset();
+void send_exit(char *s);
+void send_states(char *s);
 
 void send_over_mqtt(char *s);
 

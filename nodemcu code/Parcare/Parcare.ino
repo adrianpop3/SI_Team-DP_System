@@ -122,6 +122,12 @@ void setup() {
     init_matrixes();
     show_assign_matrix(0,0);
     wifi_init();
+    send_reset();
+    ack = 0;
+    while(ack==0){
+      delay(1000);
+      send_reset();
+    }
     //////////
     free_spaces = 16;
     free_A = 4;free_B = 4;free_C = 4;free_D = 4;
@@ -280,7 +286,7 @@ void loop() {
 
           //if we already have the access status do not send request
           if(strcmp(access_license,license)==0){
-            timeSinceLastSend = 250;
+            timeSinceLastSend = 300;
             if(verdict[0]=='Y'){
               if(free_spaces > 0){
                 Serial.println("Accepted");
@@ -309,9 +315,11 @@ void loop() {
               fsm_in_state = IN_ACCEPT;
               
             }
+            access_license[0] = '\0';
           }else{//send or resend the request to get access status
-            if(timeSinceLastSend > 200){
+            if(timeSinceLastSend > 250){
               send_license(license);
+              timeSinceLastSend = 0;
             }else{
               timeSinceLastSend += deltaTime;
             } 
@@ -339,7 +347,11 @@ void loop() {
       case IN_IDLE: if(read_ir_sensor(IR_OUT_BEFORE) == BLOCKED) fsm_out_state = IN_READ;
         break;
       case IN_READ: 
-        if(read_license_out(license) == true){
+        if(read_license_out(license) == true){  
+          static unsigned long timeSinceLastSend = 250;
+          
+          if(strcmp(exit_license, license) == 0){
+            timeSinceLastSend = 300;
             servo_out.write(BARRIER_UP);
             fsm_out_state = IN_ACCEPT;
 
@@ -355,7 +367,14 @@ void loop() {
                 break;
               }
             }
-            
+          }else{
+            if(timeSinceLastSend > 250){
+              send_exit(license);
+              timeSinceLastSend = 0;
+            }else{
+              timeSinceLastSend += deltaTime;
+            }
+          }
         }
         break;
       case IN_ACCEPT: if(read_ir_sensor(IR_OUT_AFTER) == BLOCKED) fsm_out_state = IN_UNDER;
@@ -393,10 +412,17 @@ void loop() {
       }
     }
 
+    static unsigned long timeSinceLastStatus = 1000;
+    if(timeSinceLastStatus > 1000){
+      send_states(spaces_states);
+      timeSinceLastStatus = 0;
+    }else{
+      timeSinceLastStatus += deltaTime;
+    }
 
     
-  }
+  }//end if online
 
   
   delay(10);
-}
+}//end loop
