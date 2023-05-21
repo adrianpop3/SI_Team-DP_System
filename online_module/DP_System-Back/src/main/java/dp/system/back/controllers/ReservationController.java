@@ -5,11 +5,11 @@ import dp.system.back.models.User;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.integration.support.MessageBuilder;
 import org.springframework.messaging.MessageChannel;
 import org.springframework.messaging.Message;
+import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -17,12 +17,11 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.messaging.PollableChannel;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/reservation")
 @Controller
 @EnableScheduling
+@Component
 public class ReservationController {
 
     private static int seq_number = 0;
@@ -33,33 +32,35 @@ public class ReservationController {
     @Autowired
     private MessageChannel mqttOutputChannel;
 
-    @PostMapping("/reservation")
+    @PostMapping("/reserve")
     public ResponseEntity<Reservation> reservationRequest(@RequestBody User userData) {
         seq_number++;
         int real_seq_nr = 0;
         Message<?> message;
-        JSONObject json_ans;
+        JSONObject json_ans = null;
         Reservation reservation = null;
         try {
             JSONObject json = new JSONObject();
             json.put("type", "reservation_request");
-            json.put("type", String.valueOf(seq_number));
+            json.put("seq_nr", seq_number);
             do {
                 mqttOutputChannel.send(MessageBuilder.withPayload(json.toString()).build());
-                message = mqttInputChannel.receive(500);
+                message = mqttInputChannel.receive(5000);
+                Thread.sleep(100);
                 if (message != null) {
                     json_ans = new JSONObject(message.getPayload().toString());
-                    real_seq_nr = json_ans.getInt("seq_nr");
+                    if (json_ans.getString("type").equals("reservation_reply"))
+                        real_seq_nr = json_ans.getInt("seq_nr");
                 }
             } while (real_seq_nr != seq_number);
-            if (!json.getString("parkingSpaceNumber").equals("X")) {
-                userData.setReservedParkingSpaceNumber(json.getString("parkingSpaceNumber"));
-                reservation = new Reservation(userData.getPlateNumber(), json.getString("parkingSpaceNumber"));
+            if (!json_ans.getString("parkingSpaceNumber").equals("X")) {
+                userData.setReservedParkingSpaceNumber(json_ans.getString("parkingSpaceNumber"));
+                reservation = new Reservation(userData.getPlateNumber(), json_ans.getString("parkingSpaceNumber"));
             }
-        } catch (JSONException e) {
+        } catch (JSONException | InterruptedException e) {
             e.printStackTrace();
         }
-        return new ResponseEntity<>(reservation, HttpStatus.OK);
+        return ResponseEntity.ok(reservation);
     }
 
 }
