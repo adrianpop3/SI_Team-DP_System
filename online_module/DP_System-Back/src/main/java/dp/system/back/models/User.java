@@ -13,6 +13,7 @@ import java.io.Serializable;
 @Setter
 @Getter
 @Entity
+
 public class User implements Serializable {
 
     @Id
@@ -25,4 +26,5 @@ public class User implements Serializable {
     private String username;
     private String password;
     private String plateNumber;
+    private String reservedParkingSpaceNumber;
 }
