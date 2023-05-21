@@ -11,7 +11,7 @@ const char* password = PASSWORD;
 const char* mqtt_server = MQTT_SERVER;
 const char* topic = TOPIC;
 
-char access_license[10], exit_license[10], reservation_license[10], verdict[5];
+char access_license[10], exit_license[10], verdict[5];
 
 DynamicJsonDocument doc(256);
 char message_to_send[130];
@@ -32,7 +32,7 @@ void callback(char* topic, byte* payload, unsigned int length) {
   if(strcmp(type, "enter_reply")==0){
     strcpy(access_license, doc["plateNumber"]);
     strcpy(verdict, doc["parkingSpaceNumber"]);
-  }else if(strcmp(type, "reset-ACK")==0){
+  }else if(strcmp(type, "reset_reply")==0){
     ack=1;
   }else if(strcmp(type, "exit_reply")==0){
     strcpy(exit_license, doc["plateNumber"]);
@@ -40,7 +40,6 @@ void callback(char* topic, byte* payload, unsigned int length) {
     int seq_cr = doc["seq_nr"];
     if(seq_cr > prev_seq_nr){
       //new request
-      strcpy(reservation_license, doc["plateNumber"]);
       assigned_reservation_space = reservation_assign();//0-15 or 16 if not found
       prev_seq_nr = seq_cr;
     }
@@ -48,7 +47,6 @@ void callback(char* topic, byte* payload, unsigned int length) {
       //same request; resend reply
       doc.clear();
       doc["type"] = "reservation_reply";
-      doc["plateNumber"] = reservation_license;
       char space[3]; space[2]='\0';
       if(assigned_reservation_space == 16){
         space[0]='X'; space[1]='\0';
@@ -56,7 +54,7 @@ void callback(char* topic, byte* payload, unsigned int length) {
         space[0] = 'A'+assigned_reservation_space/4;
         space[1] = '1'+assigned_reservation_space%4;
       }
-      doc["space"] = space;
+      doc["parkingSpaceNumber"] = space;
       doc["seq_nr"] = seq_cr;
       serializeJson(doc, message_to_send);
       send_over_mqtt(message_to_send);
@@ -68,14 +66,12 @@ void callback(char* topic, byte* payload, unsigned int length) {
 extern char spaces_states[16];
 
 uint8_t reservation_assign(){
-  if(free_spaces == 0){
-    return 16;
-  }
   uint8_t assign;
   for(assign = 0; assign<16; assign++)
     if(spaces_states[assign]=='F')
       break;
-  spaces_states[assign] = 'R';
+  if(assign != 16)
+    spaces_states[assign] = 'R';
   return assign;
 }
 
@@ -162,7 +158,7 @@ void send_license(char *s){
 
 void send_reset(){
   doc.clear();
-  doc["type"] = "reset";
+  doc["type"] = "reset_request";
   serializeJson(doc, message_to_send);
   send_over_mqtt(message_to_send);
 }
