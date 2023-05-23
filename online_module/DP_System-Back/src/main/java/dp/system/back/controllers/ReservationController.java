@@ -10,6 +10,7 @@ import org.springframework.integration.support.MessageBuilder;
 import org.springframework.messaging.MessageChannel;
 import org.springframework.messaging.Message;
 import org.springframework.stereotype.Component;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -22,6 +23,7 @@ import org.springframework.stereotype.Controller;
 @Controller
 @EnableScheduling
 @Component
+@CrossOrigin(origins = "http://localhost:4200")
 public class ReservationController {
 
     private static int seq_number = 0;
@@ -32,7 +34,7 @@ public class ReservationController {
     @Autowired
     private MessageChannel mqttOutputChannel;
 
-    @PostMapping("/reserve")
+    @PostMapping("/home/reserve")
     public ResponseEntity<Reservation> reservationRequest(@RequestBody User userData) {
         seq_number++;
         int real_seq_nr = 0;

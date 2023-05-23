@@ -41,32 +41,24 @@
   </div>
 </body>
 
-<!-- Add Reservation Modal
-<div class="modal fade" id="addReservationModal" tabindex="-1" role="dialog" aria-labelledby="addReservationModalLabel" aria-hidden="true">
-  <div class="modal-dialog" role="document">
+<!-- Add Reservation Modal -->
+<div class="modal fade" id="addReservationModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
       <div class="modal-content">
           <div class="modal-header">
-              <h5 class="modal-title" id="addReservationModalLabel">Add New Reservation :</h5>
-              <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
-                  <span aria-hidden="true">&times;</span>
-              </button>
+              <h1 class="modal-title fs-5" id="exampleModalLabel">Reserve Now</h1>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
           <div class="modal-body">
-              <form #addForm="ngForm" (ngSubmit)="onAddReservation(addForm)">
-                  <div class="form-group">
-                      <label for="name">Plate Number</label>
-                      <input type="text" ngModel name="plateNumber" class="form-control" id="plateNumber" placeholder="Plate Number" required />
-                  </div>
-                  <div>
-                      <button type="button" id="add-Reservation-form" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                      <button [disabled]="addForm.invalid" type="submit" class="btn btn-primary">Add Reservation</button>
-                  </div>
-              </form>
+              Reserve one parking spot.
+          </div>
+          <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+              <button type="button" class="btn btn-primary" (click)="onAddReservation()">Place Reservation</button>
           </div>
       </div>
   </div>
-</div> -->
-  
+</div>
 <!-- Add Login Modal -->
 
 <!-- Add Registration Modal -->
