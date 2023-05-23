@@ -6,8 +6,9 @@ public class ParkingLot {
 
     private List<Integer> parkingSpaces;
 
-    public ParkingLot(List<Integer> parkingSpaces) {
-        this.parkingSpaces = parkingSpaces;
+    public ParkingLot()
+    {
+//        this.parkingSpaces = parkingSpaces;
     }
 
 }

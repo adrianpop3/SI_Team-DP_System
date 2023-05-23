@@ -1,29 +1,39 @@
 import { HttpErrorResponse } from '@angular/common/http';
-import { Component } from '@angular/core';
-import { NgForm } from '@angular/forms';
-import { ReservationService } from 'src/app/services/reservation.service';
+import { Component, OnInit } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.css']
 })
-export class HomeComponent {
-    isFree: boolean | undefined;
-    isUserloggedIn: boolean | undefined;
+export class HomeComponent implements OnInit {
+  eventSource!: EventSource;
+  eventData!: string;
 
-    constructor(private reservationService: ReservationService) {}
+  ngOnInit(): void {
+    this.eventSource = new EventSource('http://localhost:8083/sse'); // Replace with your SSE endpoint URL
 
-    public onAddReservation(addForm: NgForm): void {
-      document.getElementById('add-reservation-form')?.click();
-      this.reservationService.addReservation(addForm.value).subscribe(
-        (response) => {
-          addForm.reset()
-        },
-        (error: HttpErrorResponse) => {
-          alert(error.message);
-          addForm.reset()
-        }
-      );
-    }
+    this.eventSource.addEventListener('message', (event: MessageEvent) => {
+      console.log('Received event:', event.data);
+
+      // const yourObject: YourObject = JSON.parse(event.data);
+      // this.eventData = yourObject.someData;
+    });
+
+    this.eventSource.addEventListener('error', (error: Event) => {
+      console.error('EventSource error:', error);
+      // Handle the error if necessary
+    });
+  }
+
+  ngOnDestroy(): void {
+    this.eventSource.close(); // Close the EventSource connection when the component is destroyed
+  }
 }
+
+interface YourObject {
+  someData: string;
+}
+
+

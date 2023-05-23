@@ -5,11 +5,17 @@ import dp.system.back.exceptions.UserNotFoundException;
 import dp.system.back.models.ParkingLot;
 import dp.system.back.services.UserService;
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
+
 import org.json.JSONException;
 import org.json.JSONObject;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.integration.annotation.ServiceActivator;
 import org.springframework.integration.channel.DirectChannel;
 import org.springframework.integration.channel.QueueChannel;
@@ -23,12 +29,21 @@ import org.springframework.integration.support.MessageBuilder;
 import org.springframework.messaging.MessageChannel;
 import org.springframework.messaging.MessageHandler;
 import org.springframework.messaging.PollableChannel;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 @Configuration
 @ComponentScan(basePackages = "dp.system.back.controllers")
+@RestController
+@CrossOrigin
+@RequestMapping("/sse")
 public class MqttBeans {
 
     private final UserService userService;
@@ -43,7 +58,7 @@ public class MqttBeans {
         DefaultMqttPahoClientFactory factory = new DefaultMqttPahoClientFactory();
         MqttConnectOptions options = new MqttConnectOptions();
 
-        options.setServerURIs(new String[]{"tcp://3.124.242.194:1883"});
+        options.setServerURIs(new String[]{"tcp://18.197.57.90:1883"});
         options.setCleanSession(false);
         factory.setConnectionOptions(options);
 
@@ -108,8 +123,7 @@ public class MqttBeans {
                     }
                     case "led_state" -> {
                         List<Integer> values = transformToInt(json.getString("values"));
-                        ParkingLot parkingLot = new ParkingLot(values);
-                        System.out.println(parkingLot);
+                        sendDataToClient(json.getString("values"));
                     }
                     default -> {
                     }
@@ -119,6 +133,34 @@ public class MqttBeans {
             }
         };
     }
+
+    private SseEmitter emitter;
+
+    @GetMapping(produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+    public ResponseEntity<SseEmitter> getSSEData() {
+        emitter = new SseEmitter(-1L);
+
+        // Set custom SSE headers
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.TEXT_EVENT_STREAM);
+
+        emitter.onCompletion(() -> this.emitter = null);
+        emitter.onTimeout(() -> this.emitter = null);
+
+        return new ResponseEntity<>(emitter, headers, HttpStatus.OK);
+    }
+
+
+    public void sendDataToClient(String data) {
+        if (emitter != null) {
+            try {
+                emitter.send(SseEmitter.event().data(data));
+            } catch (IOException e) {
+                // Handle exception if necessary
+            }
+        }
+    }
+
 
     private List<Integer> transformToInt(String input) {
         String[] elements = input.substring(1, input.length() - 1).split(",");
