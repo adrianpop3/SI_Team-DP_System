@@ -1,7 +1,8 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component } from '@angular/core';
-import { NgForm } from '@angular/forms';
+import { User } from 'src/app/entities/user';
 import { ReservationService } from 'src/app/services/reservation.service';
+import { UserService } from 'src/app/services/user.service';
 
 @Component({
   selector: 'app-home',
@@ -9,20 +10,20 @@ import { ReservationService } from 'src/app/services/reservation.service';
   styleUrls: ['./home.component.css']
 })
 export class HomeComponent {
-    isFree: boolean | undefined;
-    isUserloggedIn: boolean | undefined;
+    currentUser: User;
 
-    constructor(private reservationService: ReservationService) {}
+    constructor(private reservationService: ReservationService, private userService: UserService) {
+      this.currentUser = this.userService.getCurrentUser();
+    }
 
-    public onAddReservation(addForm: NgForm): void {
-      document.getElementById('add-reservation-form')?.click();
-      this.reservationService.addReservation(addForm.value).subscribe(
+    public onAddReservation(): void {
+      this.reservationService.addReservation(this.currentUser).subscribe(
         (response) => {
-          addForm.reset()
+          console.log('Reservation added successfully');
         },
         (error: HttpErrorResponse) => {
           alert(error.message);
-          addForm.reset()
+          console.error('Failed to add reservation!');
         }
       );
     }

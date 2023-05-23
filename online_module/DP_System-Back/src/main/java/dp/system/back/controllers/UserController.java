@@ -24,7 +24,7 @@ public class UserController {
 
     @PostMapping("/login")
     public ResponseEntity<?> loginUser(@RequestBody User userData) {
-        User user = userRepository.findByUsername(userData.getUsername());
+        User user = userRepository.findByPlateNumber(userData.getPlateNumber());
 
         if(user.getPassword().equals(userData.getPassword())) {
             return ResponseEntity.ok(user);

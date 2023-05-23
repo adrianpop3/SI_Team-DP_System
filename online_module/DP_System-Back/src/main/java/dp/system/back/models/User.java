@@ -23,7 +23,6 @@ public class User implements Serializable {
 
     private String email;
     private String fullName;
-    private String username;
     private String password;
     private String plateNumber;
     private String reservedParkingSpaceNumber;
