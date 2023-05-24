@@ -1,6 +1,4 @@
-import { User } from "./user";
-
-export interface Reservation {
-    id: number;
-    reserver: User;
+export class Reservation {
+    plateNumber!: string;
+    parkingSpaceNumber!: string;
 }

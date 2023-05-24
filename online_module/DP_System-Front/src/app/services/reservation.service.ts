@@ -10,10 +10,9 @@ import { User } from '../entities/user';
 export class ReservationService {
   private baseUrl="http://localhost:8083";
 
-  constructor(private http: HttpClient) { }
+  constructor(private httpClient: HttpClient) { }
 
   public addReservation(user: User): Observable<Reservation> {
-    return this.http.post<Reservation>(`${this.baseUrl}/home/reserve`, user);
+    return this.httpClient.post<Reservation>(`${this.baseUrl}/home/reserve`, user);
   }
-  
 }

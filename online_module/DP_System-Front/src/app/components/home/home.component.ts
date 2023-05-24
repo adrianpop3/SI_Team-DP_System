@@ -14,9 +14,14 @@ export class HomeComponent implements OnInit {
   eventSource!: EventSource;
   eventData!: string;
   currentUser: User;
+  parkingSpots: boolean[] = [];
 
   constructor(private reservationService: ReservationService, private userService: UserService) {
     this.currentUser = this.userService.getCurrentUser();
+
+    for (let i = 0; i < 16; i++) {
+      this.parkingSpots.push(false);
+    }
   }
 
   ngOnInit(): void {
@@ -49,6 +54,10 @@ export class HomeComponent implements OnInit {
         console.error('Failed to add reservation!');
       }
     );
+  }
+
+  toggleParkingSpotState(index: number): void {
+    this.parkingSpots[index] = !this.parkingSpots[index];
   }
 }
 

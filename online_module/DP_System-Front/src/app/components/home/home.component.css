@@ -1,23 +1,23 @@
-*{
+/* *{
   margin: 0;
   padding: 0;
-}
+} */
 
 body{
   height: 100vh;
   width: 100vw;
-}
+  background-image: url("src/assets/background.png");
+  background-repeat: no-repeat;
+  background-size: cover; 
+  }
 
 .navbar {
   height: 70px;
-  /* width: 1440px; */
 
   background: linear-gradient(90deg, rgba(235,177,26,1) 26%, rgba(140,39,45,1) 83%);
 
-
-  /* background-color: #EBB11A;  */
   display: flex;
-  justify-content: space-between; /* add space between the logo and buttons */
+  justify-content: space-between; 
   align-items: center; 
 
   padding-right: 60px;
@@ -29,111 +29,60 @@ body{
   width: auto;
 }
 
-.buttons {
-  display: flex;
-  align-items: center;
-}
-
 .buttons i {
   font-size: 35px;
   margin-right: 10px;
   cursor: pointer;
 }
 
-.buttons i:first-child {
-  margin-right: 70px; /* set a smaller margin on the first button */
+.reservation-form-btn {
+  background-color: #8c272d;
+  color: #fff;
 }
 
-.content {
-  background-image: url('src/assets/background.png'); 
-  background-position: center;
-  background-size: cover;
-  background-repeat: no-repeat;
-  position: absolute;
-  overflow-x: hidden;
-
-  left: 0;
-  right: 0;
-  bottom: 0;
-
-  width: 100vw;
-  height: calc(100vh - 70px);
+.reservation-form {
+  background-color: #e99319;
 }
 
+.checked {
+  background-color: #8c272d;
+}
 
+.unchecked {
+  background-color: #047a04;
+}
 
-/* Area A of the parkin space */
-.content .a{
+.card {
+  height: 250px; /* Increased card height */
+  border-radius: 10px; /* Added rounded borders */
+}
+
+.card-group {
   display: flex;
-  width: 600px;
-  margin-left: 187px;
+  justify-content: space-between; /* Distribute cards evenly within the group */
+  margin-bottom: 20px; /* Adjust spacing below the row */
 }
 
-.content .a div{
-  height: 222px;
-  width: 100px;
-  background-color: green;
-  opacity: 50%;
-  margin-top: 55px;
-  margin-right: 36.5px;
+.card-group .card {
+  flex-basis: calc(25% - 15px); /* Adjust card size and spacing between cards within the group */
+  margin-right: 15px; /* Spacing between cards */
 }
 
-
-/* Area B of the parkin space */
-.content .b{
-  display: flex;
-  width: 600px;
-  margin-left: 888px;
+.row:last-child {
+  margin-bottom: 40px; /* Adjust spacing below the last row */
 }
 
-.content .b div{
-  height: 222px;
-  width: 100px;
-  background-color: green;
-  opacity: 50%;
-  margin-top: -222px;
-  margin-right: 36.5px;
+.card {
+  transition: transform 0.3s ease;
 }
 
-
-/* Area C of the parkin space */
-.content .c{
-  display: flex;
-  width: 600px;
-  margin-left: 42px;
+.card:hover {
+  transform: scale(1.05);
 }
 
-.content .c div{
-  height: 222px;
-  width: 100px;
-  background-color: green;
-  opacity: 50%;
-  margin-top: 196.3px;
-  margin-right: 36.5px;
-}
-
-/* Area D of the parkin space */
-.content .d{
-  display: flex;
-  width: 600px;
-  margin-left: 752px;
-}
-
-.content .c .c3{
-  background-color: red;
-}
-.content .a .a4{
-  background-color: red;
-}
-.content .d .d4{
-  background-color: red;
-}
-
-.content .d div{
-  height: 222px;
-  width: 100px;
-  background-color: green;
-  opacity: 50%;
-  margin-top: -222px;
-  margin-right: 36.5px;
+.card-body {
+  font-size: 1.5rem;
+  text-align: center;
+  color: #333;
+  font-weight: bold;
 }
