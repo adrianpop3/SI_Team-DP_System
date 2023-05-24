@@ -6,9 +6,15 @@ public class ParkingLot {
 
     private List<Integer> parkingSpaces;
 
-    public ParkingLot()
-    {
-//        this.parkingSpaces = parkingSpaces;
+    public ParkingLot(List<Integer> parkingSpaces) {
+        this.parkingSpaces = parkingSpaces;
     }
 
+    public List<Integer> getParkingSpaces() {
+        return parkingSpaces;
+    }
+
+    public void setParkingSpaces(List<Integer> parkingSpaces) {
+        this.parkingSpaces = parkingSpaces;
+    }
 }

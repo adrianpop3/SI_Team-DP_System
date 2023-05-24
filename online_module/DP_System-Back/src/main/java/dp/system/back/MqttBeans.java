@@ -104,6 +104,7 @@ public class MqttBeans {
                         json_ans.put("plateNumber", plateNumber);
                         try {
                             String reservedParkingSpaceNumber = userService.findReservationByPlateNumber(plateNumber);
+                            System.out.println(reservedParkingSpaceNumber);
                             json_ans.put("parkingSpaceNumber", reservedParkingSpaceNumber);
                             mqttOutputChannel.send(MessageBuilder.withPayload(json_ans.toString()).build());
                         } catch (UserNotFoundException e) {

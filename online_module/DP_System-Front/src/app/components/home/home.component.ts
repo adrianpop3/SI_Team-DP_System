@@ -29,9 +29,7 @@ export class HomeComponent implements OnInit {
 
     this.eventSource.addEventListener('message', (event: MessageEvent) => {
       console.log('Received event:', event.data);
-
-      // const yourObject: YourObject = JSON.parse(event.data);
-      // this.eventData = yourObject.someData;
+      
     });
 
     this.eventSource.addEventListener('error', (error: Event) => {
