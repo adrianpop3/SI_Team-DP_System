@@ -37,6 +37,7 @@ void callback(char* topic, byte* payload, unsigned int length) {
   }else if(strcmp(type, "exit_reply")==0){
     strcpy(exit_license, doc["plateNumber"]);
   }else if(strcmp(type, "reservation_request")==0){
+    if(ack == 0) return;//do not service reservations until reset is finished
     int seq_cr = doc["seq_nr"];
     if(seq_cr > prev_seq_nr){
       //new request
