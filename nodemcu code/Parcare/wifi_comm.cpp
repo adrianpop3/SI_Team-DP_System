@@ -13,7 +13,7 @@ const char* topic = TOPIC;
 
 char access_license[10], exit_license[10], verdict[5];
 
-DynamicJsonDocument doc(256);
+DynamicJsonDocument doc(1024);
 char message_to_send[130];
 
 char received_json[256];
