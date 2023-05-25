@@ -45,13 +45,13 @@ body{
 }
 
 .checked {
-  background-color: rgba(140, 39, 45, 0.41);
+  background-color: rgba(11, 161, 11, 0.41);
   backdrop-filter: blur(10px); 
   border: none;
 }
 
 .unchecked {
-  background-color: rgba(11, 161, 11, 0.41);
+  background-color: rgba(140, 39, 45, 0.41);
   backdrop-filter: blur(10px); 
   border: none;
 }

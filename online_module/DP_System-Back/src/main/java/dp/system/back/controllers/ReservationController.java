@@ -71,8 +71,8 @@ public class ReservationController {
                 flag = false;
             } else if (!json_ans.getString("parkingSpaceNumber").equals("X")) {
                 userData.setReservedParkingSpaceNumber(json_ans.getString("parkingSpaceNumber"));
-                userRepository.save(userData);
                 reservation = new Reservation(userData.getPlateNumber(), json_ans.getString("parkingSpaceNumber"));
+                userRepository.save(userData);
             }
         } catch (JSONException | InterruptedException e) {
             e.printStackTrace();
