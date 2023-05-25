@@ -17,7 +17,7 @@ export class HomeComponent implements OnInit {
   parkingSpots: boolean[] = [];
   errorMessage: string | null = null;
   successMessage: string | null = null;
-  wasNotReservationMade: boolean = true;
+  wasNotReservationMade!: boolean;
   currentIndex: number | undefined;
   loginService: any;
 
@@ -48,12 +48,11 @@ export class HomeComponent implements OnInit {
 
     this.eventSource.addEventListener('error', (error: Event) => {
       console.error('EventSource error:', error);
-      // Handle the error if necessary
     });
   }
 
   ngOnDestroy(): void {
-    this.eventSource.close(); // Close the EventSource connection when the component is destroyed
+    this.eventSource.close();
   }
 
   public onAddReservation(): void {
@@ -73,7 +72,6 @@ export class HomeComponent implements OnInit {
   }
 
   logout(): void {
-    // Call the logout method of the login service
     this.loginService.logout();
   }
 }
