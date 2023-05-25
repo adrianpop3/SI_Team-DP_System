@@ -41,7 +41,8 @@ public class ReservationController {
     private MessageChannel mqttOutputChannel;
 
     @PostMapping("/home/reserve")
-    public ResponseEntity<Reservation> reservationRequest(@RequestBody User userData) throws JSONException {
+    public ResponseEntity<Reservation> reservationRequest(@RequestBody User userData) {
+
         seq_number++;
         int real_seq_nr = 0;
         Message<?> message;
@@ -70,9 +71,10 @@ public class ReservationController {
                 reservation = new Reservation(userData.getPlateNumber(), "-");
                 flag = false;
             } else if (!json_ans.getString("parkingSpaceNumber").equals("X")) {
-                userData.setReservedParkingSpaceNumber(json_ans.getString("parkingSpaceNumber"));
+                User user = userRepository.findByPlateNumber(userData.getPlateNumber());
+                user.setReservedParkingSpaceNumber(json_ans.getString("parkingSpaceNumber"));
                 reservation = new Reservation(userData.getPlateNumber(), json_ans.getString("parkingSpaceNumber"));
-                userRepository.save(userData);
+                userRepository.save(user);
             }
         } catch (JSONException | InterruptedException e) {
             e.printStackTrace();

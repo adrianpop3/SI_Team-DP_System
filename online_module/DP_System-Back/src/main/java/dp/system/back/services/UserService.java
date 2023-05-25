@@ -41,7 +41,9 @@ public class UserService {
     }
 
     public void deleteReservationForPlateNumber(String plateNumber) {
-        userRepository.findByPlateNumber(plateNumber).setReservedParkingSpaceNumber(null);
+        User user = userRepository.findByPlateNumber(plateNumber);
+        user.setReservedParkingSpaceNumber(null);
+        userRepository.save(user);
     }
 
 }

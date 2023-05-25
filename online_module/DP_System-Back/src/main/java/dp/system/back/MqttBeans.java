@@ -3,12 +3,14 @@ package dp.system.back;
 import dp.system.back.exceptions.ReservationNotFoundException;
 import dp.system.back.exceptions.UserNotFoundException;
 import dp.system.back.models.ParkingLot;
+import dp.system.back.repositories.UserRepository;
 import dp.system.back.services.UserService;
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -47,6 +49,9 @@ import java.util.List;
 public class MqttBeans {
 
     private final UserService userService;
+
+    @Autowired
+    private UserRepository userRepository;
 
     public MqttBeans(UserService userService) {
         this.userService = userService;
@@ -123,7 +128,6 @@ public class MqttBeans {
                         mqttOutputChannel.send(MessageBuilder.withPayload(json_ans.toString()).build());
                     }
                     case "led_state" -> {
-                        List<Integer> values = transformToInt(json.getString("values"));
                         sendDataToClient(json.getString("values"));
                     }
                     default -> {
@@ -160,18 +164,6 @@ public class MqttBeans {
                 // Handle exception if necessary
             }
         }
-    }
-
-
-    private List<Integer> transformToInt(String input) {
-        String[] elements = input.substring(1, input.length() - 1).split(",");
-
-        List<Integer> arrayList = new ArrayList<>();
-        for (String element : elements) {
-            int value = Integer.parseInt(element.trim());
-            arrayList.add(value);
-        }
-        return arrayList;
     }
 
     @Bean
