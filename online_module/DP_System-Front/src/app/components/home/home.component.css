@@ -1,0 +1,98 @@
+/* *{
+  margin: 0;
+  padding: 0;
+} */
+
+body{
+  height: 100vh;
+  width: 100vw;
+  background-image: url("src/assets/background.png");
+  background-repeat: no-repeat;
+  background-size: cover; 
+  }
+
+.navbar {
+  height: 70px;
+
+  background: linear-gradient(90deg, rgba(235,177,26,1) 26%, rgba(140,39,45,1) 83%);
+
+  display: flex;
+  justify-content: space-between; 
+  align-items: center; 
+
+  padding-right: 60px;
+  padding-left: 60px;
+}
+
+.logo img {
+  height: 50px;
+  width: auto;
+}
+
+.buttons i {
+  font-size: 35px;
+  margin-right: 10px;
+  cursor: pointer;
+}
+
+.reservation-form-btn {
+  background-color: #8c272d;
+  color: #fff;
+}
+
+.reservation-form {
+  background-color: #e99319;
+}
+
+.checked {
+  background-color: rgba(11, 161, 11, 0.41);
+  backdrop-filter: blur(10px); 
+  border: none;
+}
+
+.unchecked {
+  background-color: rgba(140, 39, 45, 0.41);
+  backdrop-filter: blur(10px); 
+  border: none;
+}
+
+.card {
+  height: 250px; 
+  border-radius: 10px; 
+}
+
+.card-group {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 20px; 
+}
+
+.card-group .card {
+  flex-basis: calc(25% - 15px); 
+  margin-right: 15px; 
+}
+
+.row:last-child {
+  margin-bottom: 40px; 
+}
+
+.card {
+  height: 250px;
+  border-radius: 10px;
+  backdrop-filter: blur(10px); /* Apply a blur effect to the background */
+  border: none; /* Remove the border */
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Add a subtle box shadow */
+  transition: transform 0.3s ease;
+}
+
+.card:hover {
+  transform: scale(1.05);
+}
+
+.card-body {
+  font-size: 1.5rem;
+  text-align: center;
+  color: #333;
+  font-weight: bold;
+  padding: 20px; /* Add padding to the card body */
+}
