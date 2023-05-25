@@ -18,6 +18,7 @@ export class LoginComponent {
     this.loginService.loginUser(this.user)
       .subscribe(data => {
         this.userService.setCurrentUser(this.user);
+        this.loginService.setLoggedIn(true);
         this.router.navigate(['/home']);
       }, 
       error => alert("Login failed!"));

@@ -1,6 +1,7 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { User } from 'src/app/entities/user';
+import { LoginService } from 'src/app/services/login.service';
 import { ReservationService } from 'src/app/services/reservation.service';
 import { UserService } from 'src/app/services/user.service';
 
@@ -18,8 +19,9 @@ export class HomeComponent implements OnInit {
   successMessage: string | null = null;
   wasNotReservationMade: boolean = true;
   currentIndex: number | undefined;
+  loginService: any;
 
-  constructor(private reservationService: ReservationService, private userService: UserService) {
+  constructor(private reservationService: ReservationService, private userService: UserService, loginService: LoginService) {
     this.currentUser = this.userService.getCurrentUser();
     if(this.currentUser.reservedParkingSpaceNumber != null) {
       this.wasNotReservationMade = false;
@@ -69,10 +71,11 @@ export class HomeComponent implements OnInit {
   toggleParkingSpotState(index: number): void {
     this.parkingSpots[index] = !this.parkingSpots[index];
   }
-}
 
-interface YourObject {
-  someData: string;
+  logout(): void {
+    // Call the logout method of the login service
+    this.loginService.logout();
+  }
 }
 
 

@@ -8,10 +8,23 @@ import { HttpClient } from '@angular/common/http';
 })
 export class LoginService {
   private baseUrl="http://localhost:8083/login";
+  private loggedIn = false;
 
   constructor(private httpClient: HttpClient ) { }
 
   loginUser(user: User): Observable<object> {
     return this.httpClient.post(`${this.baseUrl}`, user);
+  }
+
+  isLoggedIn(): boolean {
+    return this.loggedIn;
+  }
+
+  setLoggedIn(value: boolean): void {
+    this.loggedIn = value;
+  }
+
+  logout(): void {
+    this.loggedIn = false;
   }
 }
