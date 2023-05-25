@@ -15,17 +15,10 @@ export class HomeComponent implements OnInit {
   eventData!: string;
   currentUser: User;
   parkingSpots: boolean[] = [];
-  errorMessage: string | null = null;
-  successMessage: string | null = null;
-  wasNotReservationMade!: boolean;
-  currentIndex: number | undefined;
   loginService: any;
 
   constructor(private reservationService: ReservationService, private userService: UserService, loginService: LoginService) {
     this.currentUser = this.userService.getCurrentUser();
-    if(this.currentUser.reservedParkingSpaceNumber != null) {
-      this.wasNotReservationMade = false;
-    }
 
     for (let i = 0; i < 16; i++) {
       this.parkingSpots.push(false);
@@ -59,7 +52,6 @@ export class HomeComponent implements OnInit {
     this.reservationService.addReservation(this.currentUser).subscribe(
       (response) => {
         console.log('Reservation added successfully');
-        this.wasNotReservationMade = false;
       },
       (error: HttpErrorResponse) => {
         console.error('Failed to add reservation!');
@@ -69,10 +61,6 @@ export class HomeComponent implements OnInit {
 
   toggleParkingSpotState(index: number): void {
     this.parkingSpots[index] = !this.parkingSpots[index];
-  }
-
-  logout(): void {
-    this.loginService.logout();
   }
 }
 

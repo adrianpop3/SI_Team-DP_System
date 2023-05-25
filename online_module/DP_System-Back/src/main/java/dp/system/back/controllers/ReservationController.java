@@ -48,6 +48,13 @@ public class ReservationController {
         Message<?> message;
         JSONObject json_ans = null;
         Reservation reservation = null;
+
+        User userFound = userRepository.findByPlateNumber(userData.getPlateNumber());
+        if(userFound.getReservedParkingSpaceNumber() != null) {
+            Reservation reservationFound = new Reservation(userData.getPlateNumber(), userFound.getReservedParkingSpaceNumber());
+            return new ResponseEntity<>(reservationFound, HttpStatus.OK);
+        }
+
         try {
             JSONObject json = new JSONObject();
             json.put("type", "reservation_request");
