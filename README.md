@@ -1,4 +1,4 @@
-# Sistem Monitorizare Parcare
+# Sistem Monitorizare Parcare - Digital Parking System -> Physical Model + Web App
 
 ## Scurta Descriere:
 Sistem de monitorizare a numarului de locuri libere dintr-o parcare implementat cu ajutorul unei machete demonstrative, incluzand o bariera comandata de un servomotor, cititoare RFID, stickere RFID, senzori infrarosu si leduri. </br>Situatia locurilor de parcare va fi prezentata in timp real si intr-un mod digital cu ajutorul unei aplicatii web.
